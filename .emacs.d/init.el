@@ -4,6 +4,9 @@
 ;; for real keyboards
 (setq mac-option-modifier 'meta)
 
+
+(setq column-number-mode t)
+
 ;;; can't find a better way to do this yet
 (setq exec-path
       (cons "/usr/local/bin"
@@ -15,6 +18,12 @@
 (setq mouse-wheel-progressive-speed nil)
 
 (add-to-list 'load-path "~/.emacs.d/el-get/el-get")
+
+;; store all backup and autosave files in the tmp dir
+(setq backup-directory-alist
+      `((".*" . ,temporary-file-directory)))
+(setq auto-save-file-name-transforms
+      `((".*" ,temporary-file-directory t)))
 
 (unless (require 'el-get nil 'noerror)
   (with-current-buffer
@@ -57,6 +66,7 @@
    helm-ls-git
    omake-syntax
    helm-projectile
+   auto-highlight-symbol
    ))
 
 
@@ -400,9 +410,32 @@
 (add-hook 'projectile-after-switch-project-hook 'direnv-update-environment)
 
 (define-key merlin-mode-map (kbd "M-.") 'merlin-locate)
+
+
+(defun merlin-switch ()
+  (interactive)
+  (let* ((cur buffer-file-name)
+         (file (cond
+                ((string-suffix-p ".mli" cur) (substring cur 0 (- (length cur) 1)))
+                ((string-suffix-p ".ml" cur) (concat cur "i"))
+                (t (error (concat "Not an ocaml source file: " cur))))))
+    (if (file-exists-p file)
+        (merlin--goto-file-and-point (list (cons 'file file)))
+      (error (concat "File does not exist: " file)))))
+
+(define-key merlin-mode-map (kbd "C-c m") 'merlin-switch)
+
 ;;; opens up an interface when present
-(setq merlin-locate-preference 'mli)
+(setq merlin-locate-preference 'ml)
+(setq merlin-locate-in-new-window 'never)
 
 ;;; better-defaults assumes we want helm, but it's a little annoying for the quick file open 
 (global-set-key (kbd "C-x C-f") 'ido-find-file)
 (setq ido-enable-flex-matching t)
+
+(add-hook 'tuareg-mode-hook 'auto-highlight-symbol-mode)
+(setq ahs-idle-interval 0.4)
+;(ahs-restart-timer)
+
+;;; pinging ..be (The Kingdom of Belgium)
+(setq ffap-machine-p-known 'reject)

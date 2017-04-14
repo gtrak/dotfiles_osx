@@ -5,7 +5,7 @@
         tool = ediff        
 
 [mergetool.ediff]
-    cmd = emacs -q --eval \"\
+    cmd = emacs --eval \"\
 (progn\
   (defun ediff-write-merge-buffer ()\
     (let ((file ediff-merge-store-file))\

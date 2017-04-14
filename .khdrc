@@ -25,6 +25,9 @@ cmd + alt + ctrl - q     :    kwmc quit
 # Restart
 cmd + shift - r     :    ~/bin/restart-wm.sh
 
+# Lock screen
+cmd + shift - w     : open /System/Library/Frameworks/ScreenSaver.framework/Versions/A/Resources/ScreenSaverEngine.app
+
 # Launch iTerm2
 
 # cmd - return replaces ctrl - return in chrome OSX, which I tend to use
